@@ -83,7 +83,6 @@ async def game_news_command(message: Message):
             await message.answer("❌ Немає доступних новин.")
             return
     
-    
     news_list, start_index = news_state[user_id]['news_list'], news_state[user_id]['index']
     end_index = start_index + 3
     
@@ -143,7 +142,6 @@ async def get_steam_discounts():
                 }
                 for game in data.get("specials", {}).get("items", []) if game.get("discount_percent", 0) >= 20
             ]
-
 
 
 
