@@ -9,6 +9,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from deep_translator import GoogleTranslator
 
+
 TOKEN = "7838252070:AAHjgGtCy9DofzM94u7OlpLnPd4wTFykJ3U"
 
 bot = Bot(token=TOKEN)
@@ -17,6 +18,8 @@ news_state = {}
 USD_EXCHANGE_RATE = 40
 STEAM_API_URL = "https://store.steampowered.com/api/featuredcategories/?cc=UA&l=uk"
 RSS_FEED = "https://www.rockpapershotgun.com/feed"
+
+
 
 # ========================== КНОПКИ МЕНЮ ========================== #
 keyboard = ReplyKeyboardMarkup(
@@ -33,6 +36,8 @@ more_news_keyboard = ReplyKeyboardMarkup(
         [KeyboardButton(text="❌ Вийти з новин")]
     ], resize_keyboard=True
 )
+
+
 
 # ========================== ОБРОБКА КОМАНД ========================== #
 @dp.message(Command("start"))
@@ -63,6 +68,8 @@ async def steam_sales_command(message: Message):
         )
 
 @dp.message(lambda message: message.text in ["📰 Новини ігор", "📰 Більше новин"])
+
+
 async def game_news_command(message: Message):
     user_id = message.from_user.id
     if message.text == "📰 Новини ігор":
@@ -76,8 +83,10 @@ async def game_news_command(message: Message):
             await message.answer("❌ Немає доступних новин.")
             return
     
+    
     news_list, start_index = news_state[user_id]['news_list'], news_state[user_id]['index']
     end_index = start_index + 3
+    
     for news in news_list[start_index:end_index]:
         await message.answer(
             f"📰 {news['title']}\n📅 {news['published']}\n{await translate_to_ukrainian(remove_html_tags(news['summary']))}\n🔗 [Читати більше]({news['link']})"
@@ -89,11 +98,15 @@ async def game_news_command(message: Message):
     else:
         await message.answer("Це всі новини на цей момент.")
 
+
 @dp.message(lambda message: message.text == "❌ Вийти з новин")
 async def exit_news_command(message: Message):
+    
     user_id = message.from_user.id
     news_state.pop(user_id, None)
     await message.answer("Ви вийшли з розділу новин.", reply_markup=keyboard)
+
+
 
 # ========================== УТИЛИТАРНІ ФУНКЦІЇ ========================== #
 def remove_html_tags(text):
@@ -109,12 +122,14 @@ async def get_game_news():
         for entry in feed.entries[:10]
     ]
 
+
 async def get_steam_discounts():
     async with aiohttp.ClientSession() as session:
-        async with session.get(STEAM_API_URL) as response:
+        async with session.get(STEAM_API_URL) as response:    
             if response.status != 200:
                 return []
             data = await response.json()
+            
             return [
                 {
                     "name": game["name"],
@@ -128,6 +143,9 @@ async def get_steam_discounts():
                 }
                 for game in data.get("specials", {}).get("items", []) if game.get("discount_percent", 0) >= 20
             ]
+
+
+
 
 # ========================== ЗАПУСК БОТА ========================== #
 async def main():
