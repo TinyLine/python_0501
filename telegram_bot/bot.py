@@ -72,13 +72,17 @@ async def steam_sales_command(message: Message):
 
 async def game_news_command(message: Message):
     user_id = message.from_user.id
+    
     if message.text == "📰 Новини ігор":
         news_list = await get_game_news()
+        
         if not news_list:
             await message.answer("❌ На жаль, немає новин для показу.")
             return
         news_state[user_id] = {'index': 0, 'news_list': news_list}
+        
     else:
+        
         if user_id not in news_state:
             await message.answer("❌ Немає доступних новин.")
             return
